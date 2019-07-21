@@ -18,17 +18,29 @@ const getAll = () => {
     return cheeses;
 }
 
-const getItem = (cheeseID) => {
+const getItem = (cheeseName) => {
     return cheeses.find((cheese) => {
-        return cheese.cheeseID == cheeseID;
+        return cheese.cheeseName == cheeseName;
     });
 }
 
-const deleteItem = (cheeseID) => {
-    const found = cheeses.findIndex((cheese) => {
-        return cheese.cheeseID == cheeseID;
+// const deleteItem = (cheeseName) => {
+//     const found = cheeses.findIndex((cheese) => {
+//         return cheese.cheeseName == cheeseName;
+//     });
+//     cheeses.splice(found, 1);
+// }
+
+const deleteItem = (cheeseName) => {
+    let foundIndex = cheeses.findIndex((cheese) => {
+        return cheese.cheeseName === cheeseName;
     });
-    cheeses.splice(found, 1);
+    if (foundIndex > -1) {
+        cheeses.splice(foundIndex, 1);
+        return {deleted: true, count: cheeses.length};
+    } else {
+        return {deleted: false, count: cheeses.length};
+    };
 }
 
 

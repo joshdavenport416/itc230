@@ -3,7 +3,7 @@ const express = require("express");
 const bodyParser = require("body-parser")
 const app = express();
 
-// const cheeses = require("./lib/data");
+const cheeses = require("./lib/data");
 
 app.set('port', process.env.PORT || 3000);
 app.use(express.static(__dirname + '/public')); // set location for static files
@@ -31,11 +31,12 @@ app.get('/about', (req, res) => {
 
 // handle form submission
 app.post('/detail', (req, res) => {
-    res.render('detail', {name: req.body.username})
+    let result = cheeses.getItem(req.body.cheese);
+    res.render('detail', {cheeseName: req.body.cheese, result: result})
 });
 
 app.get('/delete', (req,res) => {
-    let result = cheeses.deleteItem(req.query.cheeses);
+    let result = cheeses.deleteItem(req.query.cheese);
     res.render('delete', {deletedItem: req.query.cheese, result: result})
 });
 
