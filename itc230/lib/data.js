@@ -20,7 +20,7 @@ const getAll = () => {
 
 const getItem = (cheeseName) => {
     return cheeses.find((cheese) => {
-        return cheese.cheeseName == cheeseName;
+        return cheese.cheeseName = cheeseName;
     });
 }
 
