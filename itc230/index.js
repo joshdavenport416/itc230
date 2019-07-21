@@ -1,61 +1,55 @@
-const cheeses = require("./lib/data");
+'use strict'
+const express = require("express");
+const bodyParser = require("body-parser")
+const app = express();
 
-const http = require("http");
-http.createServer((req, res) => {
-    const url = req.url.toLowerCase().split("?");
-    const fs = require("fs");
-    switch (url[0]) {
-        case '/':            
-            fs.readFile("public/home.html", (err, data) => {
-                if (err) return console.error(err);
-                res.writeHead(200, { 'Content-Type': 'text/html' });
-                res.end(data.toString());
-            });
-            break; 
-        case '/about':
-            fs.readFile("public/about.html", (err, data) => {
-                if (err) return console.error(err);
-                res.writeHead(200, { 'Content-Type': 'text/html' });
-                res.end(data.toString());
-            });
-            break;
-        case '/detail':
-            if(url[1] === undefined) {
-                fss.readFile("public/error.html", (err, dat) => {
-                    if (err) return console.error(err);
-                    res.writeHead(200, {'Constant-Type': 'text/html'});
-                    res.end(data.toString());
-                });
-            } else {
-                let params = url[1].split("=");
-            res.writeHead(200, {'Content-Type': 'text/plain'});
-            res.end(JSON.stringify(cheeses.getItem(params[1]))
-            )
-            }
-            break;
-        case '/delete':
-            if(url[1] === undefined) {
-                fs.readFile("public/error.html", (err, data) => {
-                    if (err) return console.error(err);
-                    res.writeHead(200, {'Content-Type': 'text/html'});
-                    res.end(data.toString());
-                });
-            } else {
-                let paramsDelete = url[1].split("=");
-            res.writeHead(200, {'Content-Type': 'text/html'});
-            res.end(JSON.stringify(cheeses.getItem(paramsDelete[1])) + ' has been deleted.');
-            cheeses.deleteItem(paramsDelete[1]);
-            }
-                console.log(cheeses.getAll());
-            break;
-        default:
-            res.writeHead(404, { 'Content-Type': 'text/plain' });
-            res.end('404: Page Not Found');
-            break;
-    }
-}).listen(process.env.PORT || 3000);
+// const cheeses = require("./lib/data");
 
-// const data = require("./lib/data")
+app.set('port', process.env.PORT || 3000);
+app.use(express.static(__dirname + '/public')); // set location for static files
+app.use(bodyParser.urlencoded({ extended: true })); // parse form submissions
 
-// console.log(data.getAll())
-// console.log(data.getItem('Cheddar, sharp'));
+const handlebars = require("express-handlebars");
+app.engine(".html", handlebars({ extname: '.html', defaultLayout: false }));
+app.set("view engine", ".html");
+
+// send static file as response
+// app.get('/', (req, res) => {
+//     res.type('text/html'); 
+//     res.sendFile(__dirname + '/public/home.html');
+// });
+
+app.get('/', (req, res) => {
+    res.render('home', {name: req.query.name});
+});
+
+// send plain text response
+app.get('/about', (req, res) => {
+    res.type('text/plain');
+    res.sendFile(__dirname + '/public/about.html');
+});
+
+// handle form submission
+app.post('/detail', (req, res) => {
+    res.render('detail', {name: req.body.username})
+});
+
+app.get('/delete', (req,res) => {
+    let result = cheeses.deleteItem(req.query.cheeses);
+    res.render('delete', {deletedItem: req.query.cheese, result: result})
+});
+
+// define 404 handler
+app.use((req, res) => {
+    res.type('text/plain');
+    res.status(404);
+    res.send('404 - Not found');
+});
+
+app.listen(app.get('port'), () => {
+    console.log('Express started at ' + __dirname);
+});
+
+
+
+
