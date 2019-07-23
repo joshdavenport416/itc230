@@ -20,8 +20,8 @@ const getAll = () => {
 
 const getItem = (cheeseName) => {
     return cheeses.find((cheese) => {
-        return cheese.cheeseName = cheeseName;
-    });
+        return cheese.cheeseName == cheeseName;
+    })
 }
 
 // const deleteItem = (cheeseName) => {
@@ -43,7 +43,16 @@ const deleteItem = (cheeseName) => {
     };
 }
 
+const addItem = (newItem) => {
+    if (getItem(newItem.cheeseName)) {
+        return {added: false, count : cheeses.length};
+    } else {
+        cheeses.push(newItem);
+        return {added: true, count: cheeses.length};
+    };
+}
 
 
 
-module.exports = { getAll, getItem, deleteItem }
+
+module.exports = { getAll, getItem, deleteItem, addItem }

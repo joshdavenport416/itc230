@@ -49,7 +49,7 @@ app.use((req, res) => {
 
 app.listen(app.get('port'), () => {
     console.log('Express started at ' + __dirname);
-});
+});;
 
 
 
