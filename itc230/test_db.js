@@ -1,10 +1,10 @@
-var cheeses = require("./models/cheeses");
+var cheeses = require("./models/cheese");
 
-cheeses.countDocuments((err, result) => {
+Cheeses.countDocuments((err, result) => {
     console.log(result);
 });
 
-cheeses.find({}, (err, items) => {
+Cheese.find({}, (err, items) => {
     if (err) return next(err);
     console.log(items.length);
 });

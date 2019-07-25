@@ -2,8 +2,8 @@
 const express = require("express");
 const bodyParser = require("body-parser")
 const app = express();
-
-const cheeses = require("./lib/data");
+const cheeses = require('./models/cheese');
+// const cheeses = require("./lib/data");
 
 app.set('port', process.env.PORT || 3000);
 app.use(express.static(__dirname + '/public')); // set location for static files
@@ -20,7 +20,10 @@ app.set("view engine", ".html");
 // });
 
 app.get('/', (req, res) => {
-    res.render('home', {name: req.query.name});
+    cheeses.find({}, { '_id': false }, (err, items) => {
+        if (err) return next(err);
+        res.render('home', { cheeses: items });
+    });
 });
 
 // send plain text response
@@ -31,14 +34,52 @@ app.get('/about', (req, res) => {
 
 // handle form submission
 app.post('/detail', (req, res) => {
-    let result = cheeses.getItem(req.body.cheese);
-    res.render('detail', {cheeseName: req.body.cheese, result: result})
+    cheeses.findOne({ 'cheeseName': req.body.cheeseName }, { '_id': false }, (err, item) => {
+        if (err) return next(err);
+        res.render('detail', { cheese: item });
+    })
 });
 
-app.get('/delete', (req,res) => {
-    let result = cheeses.deleteItem(req.query.cheese);
-    res.render('delete', {deletedItem: req.query.cheese, result: result})
+app.get('/detail', (req, res) => {
+    cheeses.findOne({'cheeseName':req.query.cheeseName}, {'_id':false}, (err, item) => {
+        if (err) return next(err);
+        res.render('detail', { cheese: item });
+    })
 });
+
+
+// delete item
+app.get('/delete', (req, res) => {
+    cheeses.deleteOne({ 'cheeseName': req.query.cheeseName }, (err, item) => {
+        if (err) return next(err);
+        cheeses.countDocuments((err, result) => {
+            res.render('delete', {
+                cheeseName: req.query.cheeseName,
+                count: result
+            });
+        })
+    })
+});
+
+// add item
+app.post('/add', (req, res) => {
+    let newCheese = {
+        'cheeseName': req.body.cheeseName, 
+        'cheeseOzPackSize': req.body.cheeseOzPackSize, 
+        'cheeseBrand': req.body.cheeseBrand, 
+        'cheesePricePerOZ': req.body.cheesePricePerOZ};
+    cheeses.update({ 'cheeseName': req.body.cheeseName }, newCheese, { upsert: true }, (err, result) => {
+        if (err) return next(err);
+        console.log(result);
+        res.render('add', {
+            cheeseName: req.body.cheeseName,
+            cheeseOzPackSize: req.body.cheeseOzPackSize,
+            cheeseBrand: req.body.cheeseBrand,
+            cheesePricePerOZ: req.body.cheesePricePerOZ
+        })
+    })
+});
+
 
 // define 404 handler
 app.use((req, res) => {
@@ -49,8 +90,16 @@ app.use((req, res) => {
 
 app.listen(app.get('port'), () => {
     console.log('Express started at ' + __dirname);
-});;
+});
 
 
 
 
+
+
+// // insert or update a single record
+// var newCheese = { cheeseName: 'Port Salut', cheeseOzPackSize: 16, cheeseBrand: 'Port Salut', cheesePricePerOZ: 1.34 }
+// Book.update({ 'cheeseName': 'Port Salut' }, newCheese, { upsert: true }, (err, result) => {
+//     if (err) return next(err);
+//     console.log(result);
+// }); 

@@ -1,17 +1,14 @@
-<h1>Detail Page {{cheeseName}}</h1>
+<h1>Detail Page: {{cheeseName}}</h1>
 
 
     
-{{#if result}}
-    <li>Cheese Name: {{ result.cheeseName }}</li>
-    <li>Brand: {{ result.cheeseBrand }}</li>
-    <li>Pack Size: {{ result.cheeseOzPackSize}} oz</li>
-    <li>Price per oz: ${{ result.cheesePricePerOZ }}</li>
+{{#if cheese}}
+    <h4>{{cheese}}</h4>
 {{else}}
     <h3>We're sorry, but that cheese does not appear to be in our database :(</h3>
 {{/if}}
 
-<a href="/delete?cheese={{cheeseName}}">
+<a href="/delete?cheeseName={{cheese.cheeseName}}">
     Do you wish to delete this cheese?
 </a>
 <br><br>
