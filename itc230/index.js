@@ -12,6 +12,7 @@ app.use(bodyParser.urlencoded({ extended: true })); // parse form submissions
 const handlebars = require("express-handlebars");
 app.engine(".html", handlebars({ extname: '.html', defaultLayout: false }));
 app.set("view engine", ".html");
+app.use('/api', require('cors')());
 
 // send static file as response
 // app.get('/', (req, res) => {
@@ -19,8 +20,9 @@ app.set("view engine", ".html");
 //     res.sendFile(__dirname + '/public/home.html');
 // });
 
+// get all
 app.get('/', (req, res) => {
-    cheeses.find({}, { '_id': false }, (err, items) => {
+    cheeses.find({}, { '_id': false }, (err, items, next) => {
         if (err) return next(err);
         res.render('home', { cheeses: items });
     });
@@ -33,14 +35,14 @@ app.get('/about', (req, res) => {
 });
 
 // handle form submission
-app.post('/detail', (req, res) => {
+app.post('/detail', (req, res, next) => {
     cheeses.findOne({ 'cheeseName': req.body.cheeseName }, { '_id': false }, (err, item) => {
         if (err) return next(err);
         res.render('detail', { cheese: item });
     })
 });
 
-app.get('/detail', (req, res) => {
+app.get('/detail', (req, res, next) => {
     cheeses.findOne({'cheeseName':req.query.cheeseName}, {'_id':false}, (err, item) => {
         if (err) return next(err);
         res.render('detail', { cheese: item });
@@ -50,7 +52,7 @@ app.get('/detail', (req, res) => {
 
 // delete item
 app.get('/delete', (req, res) => {
-    cheeses.deleteOne({ 'cheeseName': req.query.cheeseName }, (err, item) => {
+    cheeses.deleteOne({ 'cheeseName': req.query.cheeseName }, (err, next) => {
         if (err) return next(err);
         cheeses.countDocuments((err, result) => {
             res.render('delete', {
@@ -80,6 +82,38 @@ app.post('/add', (req, res) => {
     })
 });
 
+
+// api
+// get a single item
+app.get('/api/detail/:cheeseName', (req, res, next) => {
+    cheeses.findOne({ cheeseName: req.params.cheeseName }, { "_id": false }, (err, item) => {
+        if (err) return next(err);
+        res.json(item);
+    })
+});
+
+// get all items
+app.get('/api/detail', (req, res, next) => {
+    cheeses.find({}, { "_id": false }, (err, items) => {
+        if (err) return next(err);
+        res.json(items);
+    })
+});
+
+// delete an item
+app.get('/api/delete/:cheeseName', (req, res, next) => {
+    cheeses.deleteOne({ cheeseName: req.params.cheeseName }, (err, item) => {
+        if (err) return next(err);
+        res.json(item);
+    })
+});
+
+// add an item
+app.post('/api/add/', (req, res, next) => {
+    cheeses.update({ 'cheeseName': req.body.cheeseName }, req.body, { upsert: true }, (err, result) => {
+        res.json({cheeseName: req.body.cheeseName });
+    })
+});
 
 // define 404 handler
 app.use((req, res) => {
