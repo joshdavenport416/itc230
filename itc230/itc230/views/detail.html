@@ -1,0 +1,15 @@
+<h1>Detail Page: {{cheeseName}}</h1>
+
+
+    
+{{#if cheese}}
+    <h4>{{cheese}}</h4>
+{{else}}
+    <h3>We're sorry, but that cheese does not appear to be in our database :(</h3>
+{{/if}}
+
+<a href="/delete?cheeseName={{cheese.cheeseName}}">
+    Do you wish to delete this cheese?
+</a>
+<br><br>
+<a href="/">Home Page</a>

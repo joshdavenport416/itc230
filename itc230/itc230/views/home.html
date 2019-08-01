@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>Cheese Head</title>
+    </head>
+
+    <body>
+        <h1>Cheese Head Home Page</h1>
+        <h2>For all of your Cheesiest Needs</h2>
+
+        <h3>Cheese Look-Up</h3>
+        <form action="/detail" method="post">
+            <legend>Enter Desired Cheese Name:</legend>
+                <input type=text name="cheeseName">
+            <button>Submit</button>
+        </form>
+
+        <br>
+
+        <h3>Add-a-Cheese</h3>
+        <form action="/api/added/" method="post">
+            <legend>Cheese Name:</legend>
+                <input type=text name="cheeseName">
+            <legend>Pack Size in Ounces:</legend>
+                <input type=int name="cheeseOzPackSize">
+            <legend>Brand:</legend>
+                <input type=text name="cheeseBrand">
+            <legend>Price per Ounce:</legend>
+                <input type=int name="cheesePricePerOz  ">
+            <button>submit</button>
+        </form>
+
+
+        
+
+    </body>
+
+</html>
