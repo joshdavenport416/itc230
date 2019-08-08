@@ -8,13 +8,15 @@
 <body>
     <h1>Add a Cheese</h1>
     <b>Cheese Head </b>
-    <form action="/api/add/" method="post">
-        <legend>Title:</legend>
-        <input type=text name="title">
-        <legend>Type:</legend>
-        <input type=text name="type">
+    <form action="/api/added/" method="post">
+        <legend>Cheese:</legend>
+            <input type=text name="cheeseName">
+        <legend>Pack Size in Ounces:</legend>
+            <input type=int name="cheeseOzPackSize">
+        <legend>Brand:</legend>
+            <input type=text name="cheeseBrand">
         <legend>Price:</legend>
-        <input type=text name="price">
+            <input type=float name="cheesePricePerOz  ">
         <button>submit</button>
     </form>
 

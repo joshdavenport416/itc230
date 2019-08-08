@@ -21,10 +21,11 @@ app.use('/api', require('cors')());
 // });
 
 // get all
-app.get('/', (req, res) => {
-    cheeses.find({}, { '_id': false }, (err, items, next) => {
+app.get('/', (req, res, next) => {
+    cheeses.find((err, cheeses) => {
         if (err) return next(err);
-        res.render('home', { cheeses: items });
+        res.render('home2', { cheeses: JSON.stringify(cheeses)});
+        // res.render('home', { cheeses: JSON.stringify(items)});
     });
 });
 
@@ -69,7 +70,7 @@ app.post('/add', (req, res) => {
         'cheeseName': req.body.cheeseName, 
         'cheeseOzPackSize': req.body.cheeseOzPackSize, 
         'cheeseBrand': req.body.cheeseBrand, 
-        'cheesePricePerOZ': req.body.cheesePricePerOZ};
+        'cheesePricePerOz': req.body.cheesePricePerOz};
     cheeses.update({ 'cheeseName': req.body.cheeseName }, newCheese, { upsert: true }, (err, result) => {
         if (err) return next(err);
         console.log(result);
@@ -77,7 +78,7 @@ app.post('/add', (req, res) => {
             cheeseName: req.body.cheeseName,
             cheeseOzPackSize: req.body.cheeseOzPackSize,
             cheeseBrand: req.body.cheeseBrand,
-            cheesePricePerOZ: req.body.cheesePricePerOZ
+            cheesePricePerOz: req.body.cheesePricePerOz
         })
     })
 });
@@ -108,12 +109,48 @@ app.get('/api/delete/:cheeseName', (req, res, next) => {
     })
 });
 
+
+
+
+
+
 // add an item
-app.post('/api/add/', (req, res, next) => {
-    cheeses.update({ 'cheeseName': req.body.cheeseName }, req.body, { upsert: true }, (err, result) => {
-        res.json({cheeseName: req.body.cheeseName });
+app.post('/api/added/', (req, res, next) => {
+    cheeses.updateOne({
+        'cheeseName': req.body.cheeseName,
+        'cheeseOzPackSize': req.body.cheeseOzPackSize,
+        'cheeseBrand': req.body.cheeseBrand,
+        'cheesePricePerOz': req.body.cheesePricePerOz }, req.body, { upsert: true }, (err, result) => {
+            res.json({
+                cheeseName: req.body.cheeseName,
+                cheeseOzPackSize: req.body.cheeseOzPackSize,
+                cheeseBrand: req.body.cheeseBrand,
+                cheesePricePerOz: req.body.cheesePricePerOz });
     })
 });
+
+
+// add item
+app.post('/add', (req, res) => {
+    let newCheese = {
+        'cheeseName': req.body.cheeseName,
+        'cheeseOzPackSize': req.body.cheeseOzPackSize,
+        'cheeseBrand': req.body.cheeseBrand,
+        'cheesePricePerOz': req.body.cheesePricePerOz
+    };
+    cheeses.update({ 'cheeseName': req.body.cheeseName }, newCheese, { upsert: true }, (err, result) => {
+        if (err) return next(err);
+        console.log(result);
+        res.render('add', {
+            cheeseName: req.body.cheeseName,
+            cheeseOzPackSize: req.body.cheeseOzPackSize,
+            cheeseBrand: req.body.cheeseBrand,
+            cheesePricePerOz: req.body.cheesePricePerOz
+        })
+    })
+});
+
+
 
 // define 404 handler
 app.use((req, res) => {
@@ -132,7 +169,7 @@ app.listen(app.get('port'), () => {
 
 
 // // insert or update a single record
-// var newCheese = { cheeseName: 'Port Salut', cheeseOzPackSize: 16, cheeseBrand: 'Port Salut', cheesePricePerOZ: 1.34 }
+// var newCheese = { cheeseName: 'Port Salut', cheeseOzPackSize: 16, cheeseBrand: 'Port Salut', cheesePricePerOz: 1.34 }
 // Book.update({ 'cheeseName': 'Port Salut' }, newCheese, { upsert: true }, (err, result) => {
 //     if (err) return next(err);
 //     console.log(result);

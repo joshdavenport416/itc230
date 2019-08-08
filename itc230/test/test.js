@@ -9,7 +9,7 @@ describe('Cheese Get method', () => {
             cheeseName: 'Pepperjack', 
             cheeseOzPackSize: 8, 
             cheeseBrand: 'Lucerne', 
-            cheesePricePerOZ: 0.31});
+            cheesePricePerOz  : 0.31});
     });
 
     it('fails w/ invalid cheese', () => {
@@ -37,7 +37,7 @@ describe('Add method', () => {
             cheeseName: 'Bald Eagle Cheeses', 
             cheeseOzPackSize: 15.5, 
             cheeseBrand: 'Ridgemont', 
-            cheesePricePerOZ: 73.72});
+            cheesePricePerOz  : 73.72});
         expect(result.added).to.be.true;
     });
 
@@ -47,7 +47,7 @@ describe('Add method', () => {
             cheeseName: 'Goat Cheese', 
             cheeseOzPackSize: 4, 
             cheeseBrand: 'Primo Taglio', 
-            cheesePricePerOZ: 1.72});
+            cheesePricePerOz  : 1.72});
         expect(result.added).to.be.false;
     });
 });

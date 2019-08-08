@@ -15,7 +15,7 @@ const mySchema = mongoose.Schema({
         cheeseName: String,
         cheeseOzPackSize: Number,
         cheeseBrand: String,
-        cheesePricePerOZ: Number
+        cheesePricePerOz  : Number
        }); 
        
 module.exports = mongoose.model('Cheese', mySchema);

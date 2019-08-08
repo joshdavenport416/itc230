@@ -1,0 +1,99 @@
+<html>
+    <head>
+        <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+        <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+        <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+
+        <style type="text/css">
+            .flex-container {
+                display: -webkit-flex;
+                display: flex;
+                width: 600px;
+                background-color: lightgrey;
+            }
+        
+            #item-list {
+                background-color: cornflowerblue;
+                width: 30%;
+                padding: 0px 10px 0px 0px;
+            }
+        
+            #item-details {
+                background-color: yellow;
+                width: 75%;
+                padding: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <h2>Cheese Head homepage</h2>
+
+        <div id="root">
+
+        <span>
+            Cheese name: <br/>
+            Pack size in ounces: <br/>
+            Brand: <br/>
+            Price per ounce: <br/>
+        </span>
+        
+    <script type="text/babel">        
+        const List = (props) => {
+            let items_list = props.items.map((item) => {
+                return <li onClick={props.clickHandler} key={item.cheeseName} id={item.cheeseName}>{item.cheeseName}</li>
+            });
+            return (
+                <div>
+                    Cheese List
+                    <ul>
+                    {items_list}
+                    </ul>
+                </div>
+            );
+        }
+
+        const Detail = (props) => {
+            return (
+                <span>
+                    Cheese name: {props.item.cheeseName}<br/>
+                    Pack size in ounces: {props.item.cheeseOzPackSize}<br/>
+                    Brand: {props.item.cheeseBrand}<br/>
+                    Price per ounce: {props.item.cheesePricePerOz}<br/>
+                </span>
+            )
+        }
+
+        class App extends React.Component {
+            constructor(props) {
+                super(props);
+                this.state = {
+                    items: {{{cheeses}}},
+                    curItem: {}
+                };
+                
+                this.showDetail = this.showDetail.bind(this);
+            }
+            
+            showDetail(event){
+                console.log(event.target)
+                let editItem = this.state.items.find((item) => {
+                    return item.cheeseName == event.target.id;
+                });
+                this.setState({curItem: editItem});
+            }
+
+            render() {
+                return (
+                    <div>
+                        <List items={this.state.items} clickHandler={this.showDetail}/>
+                        <Detail item={this.state.curItem}/>
+                    </div>
+                );
+            }
+        }
+        
+        ReactDOM.render( <App/>, document.getElementById('root') );
+        
+    </script>
+    </body>
+</html>
