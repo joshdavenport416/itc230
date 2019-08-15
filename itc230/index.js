@@ -13,6 +13,7 @@ const handlebars = require("express-handlebars");
 app.engine(".html", handlebars({ extname: '.html', defaultLayout: false }));
 app.set("view engine", ".html");
 app.use('/api', require('cors')());
+app.use(bodyParser.json());
 
 // send static file as response
 // app.get('/', (req, res) => {
@@ -103,10 +104,10 @@ app.get('/api/detail', (req, res, next) => {
 
 // delete an item
 app.get('/api/delete/:cheeseName', (req, res, next) => {
-    cheeses.deleteOne({ cheeseName: req.params.cheeseName }, (err, item) => {
+    cheeses.deleteOne({ "cheeseName": req.params.cheeseName }, (err, item) => {
         if (err) return next(err);
         res.json(item);
-    })
+    });
 });
 
 
@@ -116,16 +117,12 @@ app.get('/api/delete/:cheeseName', (req, res, next) => {
 
 // add an item
 app.post('/api/added/', (req, res, next) => {
-    cheeses.updateOne({
-        'cheeseName': req.body.cheeseName,
-        'cheeseOzPackSize': req.body.cheeseOzPackSize,
-        'cheeseBrand': req.body.cheeseBrand,
-        'cheesePricePerOz': req.body.cheesePricePerOz }, req.body, { upsert: true }, (err, result) => {
-            res.json({
-                cheeseName: req.body.cheeseName,
-                cheeseOzPackSize: req.body.cheeseOzPackSize,
-                cheeseBrand: req.body.cheeseBrand,
-                cheesePricePerOz: req.body.cheesePricePerOz });
+    cheeses.update({ 'cheeseName': req.body.cheeseName }, req.body, { upsert: true }, (err, result) => {
+        if (!result.upserted){
+            res.json({cheesseName: req.body.cheeseName});
+        } else {
+            res.json({cheeseName:req.body.cheeseName, cheeseName: result.upsertedd[0].cheeseName})
+        }
     })
 });
 

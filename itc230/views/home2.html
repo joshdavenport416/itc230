@@ -1,10 +1,12 @@
 <html>
     <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width">
         <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
         <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
         <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
 
-        <style type="text/css">
+        <!-- <style type="text/css">
             .flex-container {
                 display: -webkit-flex;
                 display: flex;
@@ -23,7 +25,7 @@
                 width: 75%;
                 padding: 10px;
             }
-        </style>
+        </style> -->
     </head>
     <body>
         <h2>Cheese Head homepage</h2>
@@ -54,12 +56,18 @@
 
         const Detail = (props) => {
             return (
-                <span>
-                    Cheese name: {props.item.cheeseName}<br/>
-                    Pack size in ounces: {props.item.cheeseOzPackSize}<br/>
-                    Brand: {props.item.cheeseBrand}<br/>
-                    Price per ounce: {props.item.cheesePricePerOz}<br/>
-                </span>
+                <div>
+                    <form>
+                        Cheese name: <input onChange={props.change} name="cheeseName" value={props.item.cheeseName  || ""}/><br/>
+                        Pack size: <input onChange={props.change} name="cheeseOzPackSize" value={props.item.cheeseOzPackSize  || ""}/><br/>
+                        Brand: <input onChange={props.change} name="cheeseBrand" value={props.item.cheeseBrand  || ""}/><br/>
+                        Price: <input onChange={props.change} name="cheesePricePerOz" value={props.item.cheesePricePerOz  || ""}/><br/>
+                    </form>
+                    <button onClick={props.save}>Save</button>  
+                    <button onClick={props.reset}>Reset</button> 
+                    <button onClick={props.delete}>Delete</button>
+       
+                </div>
             )
         }
 
@@ -72,6 +80,10 @@
                 };
                 
                 this.showDetail = this.showDetail.bind(this);
+                this.changeHandler = this.changeHandler.bind(this);
+                this.onClear = this.onClear.bind(this);
+                this.saveHandler = this.saveHandler.bind(this);
+                this.deleteHandler = this.deleteHandler.bind(this);
             }
             
             showDetail(event){
@@ -82,14 +94,64 @@
                 this.setState({curItem: editItem});
             }
 
-            render() {
-                return (
-                    <div>
-                        <List items={this.state.items} clickHandler={this.showDetail}/>
-                        <Detail item={this.state.curItem}/>
-                    </div>
-                );
+            changeHandler(event) {
+                var newItem = this.state.curItem;
+                newItem[event.target.name] = event.target.value
+                this.setState({curItem: newItem});
             }
+
+            onClear() {
+                console.log('clear')
+                this.setState({curItem: {}});
+            }
+
+            saveHandler() {
+                console.log('save')
+                let newItem = this.state.curItem;
+                fetch("/api/added/", {
+                    method: "POST",
+        	        headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newItem)
+                })  .then(res => res.json())
+        	        .then((json) => { 
+                        console.log(json)
+                    let newData;
+                    if (!newItem.cheeseName) {
+                        newItem.cheeseName = json.cheeseName;
+                        newData.push(newItem);
+                    }
+                    this.setState({items: newData});
+                });          
+            }
+
+            deleteHandler(){
+                let id = this.state.curItem.cheeseName;
+        
+                fetch("/api/delete/" + cheeseName).then((response) => {
+                return response.json();
+                }).then((results) => {
+                    const remainder = this.state.items.filter((item) => {
+                    return item.cheeseName !== cheeseName;
+                    });
+                    this.setState({items: remainder, curItem: {}});
+                });
+            }
+
+                render() {
+                    return (
+                        <div>
+                            <List 
+                                items={this.state.items} 
+                                clickHandler={this.showDetail}/>
+                            <Detail 
+                                change={this.changeHandler} 
+                                reset={this.onClear} 
+                                save={this.saveHandler} 
+                                delete={this.deleteHandler} 
+                                item={this.state.curItem}/>
+                        </div>
+                    );
+                }
         }
         
         ReactDOM.render( <App/>, document.getElementById('root') );
